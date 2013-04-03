@@ -5,7 +5,8 @@ import math
 from rpython.rlib import rfloat
 
 from topaz.module import Module, ModuleDef, ClassDef
-from topaz.objects.exceptionobject import W_StandardError, new_exception_allocate
+from topaz.objects.exceptionobject import W_StandardError, W_TypeError, \
+                                          new_exception_allocate
 from rpython.rlib.rfloat import NAN
 
 
@@ -77,9 +78,15 @@ class Math(Module):
             res = rfloat.copysign(rfloat.INFINITY, value)
         return space.newfloat(res)
 
-    @moduledef.function("exp", value="float")
-    def method_exp(self, space, value):
-        return space.newfloat(math.exp(value))
+    @moduledef.function("exp")
+    def method_exp(self, space, w_value):
+        if(space.is_kind_of(w_value, space.w_integer) or
+            space.is_kind_of(w_value, space.w_float)):
+            return space.newfloat(math.exp(space.float_w(w_value)))
+        else:
+            classname = space.getclass(w_value).name
+            raise space.error(space.w_TypeError,
+                              "can't convert %s into Float" % classname)
 
     @moduledef.function("frexp", value="float")
     def method_frexp(self, space, value):

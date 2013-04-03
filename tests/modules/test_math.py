@@ -66,6 +66,9 @@ class TestMath(BaseTopazTest):
         w_res = space.execute("return [Math.cos(0), Math.cos(1)]")
         assert self.unwrap(space, w_res) == [1, math.cos(1)]
 
+        with self.raises(space, "TypeError", "can't convert String into Float"):
+            space.execute("Math.cos('some String')")
+
     def test_cosh(self, space):
         w_res = space.execute("return [Math.cosh(0), Math.cosh(1), Math.cosh(123123)]")
         assert self.unwrap(space, w_res) == [1, math.cosh(1), float("inf")]
@@ -73,6 +76,12 @@ class TestMath(BaseTopazTest):
     def test_exp(self, space):
         w_res = space.execute("return [Math.exp(0.0), Math.exp(1)]")
         assert self.unwrap(space, w_res) == [1, math.exp(1)]
+
+        with self.raises(space, "TypeError", "can't convert String into Float"):
+            space.execute("Math.exp('some String')")
+
+        with self.raises(space, "TypeError", "can't convert Symbol into Float"):
+            space.execute("Math.exp(:some_symbol)")
 
     def test_frexp(self, space):
         w_res = space.execute("return Math.frexp(1234)")
