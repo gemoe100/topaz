@@ -1,19 +1,26 @@
 class Hash
-  def each
+  def each(&block)
+    return self.enum_for(:each) if !block
     iter = Topaz::HashIterator.new(self)
     while true
       begin
         key, value = iter.next()
       rescue StopIteration
-        return
+        return self
       end
       yield key, value
     end
   end
   alias each_pair each
 
-  def each_key
+  def each_key(&block)
+    return self.enum_for(:each_key) if !block
     each { |k, v| yield k }
+  end
+
+  def each_value(&block)
+    return self.enum_for(:each_value) if !block
+    each { |k, v| yield v }
   end
 
   def ==(other)
