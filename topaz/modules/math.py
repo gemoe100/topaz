@@ -35,11 +35,6 @@ def typechecker(*types):
         return new_mathfunc
     return checker
 
-def _type_error_for(w_value, space):
-    clsname = space.getclass(w_value).name
-    return space.error(space.w_TypeError,
-                       "can't convert %s into Float" % clsname)
-
 class Math(Module):
     moduledef = ModuleDef("Math", filepath=__file__)
 
