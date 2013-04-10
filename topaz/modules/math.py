@@ -40,7 +40,7 @@ def converter(func):
                 f_args.append(f_arg)
             else:
                 clsname = space.getclass(arg_w).name
-                errmsg = "can't convert %s into Float" % (clsname)
+                errmsg = "can't convert %s into Float" % clsname
                 raise space.error(space.w_TypeError, errmsg)
         return func(self, space, *f_args)
     wrapper.func_name = func.func_name
@@ -163,10 +163,19 @@ class Math(Module):
     def method_hypot(self, space, value1, value2):
         return space.newfloat(math.hypot(value1, value2))
 
-    @moduledef.function("ldexp", value1="float", value2="int")
-    @check_type_errors("Numeric", "Integer")
-    def method_ldexp(self, space, value1, value2):
-        return space.newfloat(math.ldexp(value1, value2))
+    @moduledef.function("ldexp", value1="w_float", value2="w_integer")
+    def method_ldexp(self, space, w_value1, w_value2):
+        if space.is_kind_of(w_value1, space.w_numeric):
+            if space.is_kind_of(w_value2, space.w_integer):
+                value1 = Coerce.float(space, w_value1)
+                value2 = Coerce.int(space, w_value2)
+                return space.newfloat(math.ldexp(value1, value2))
+            else:
+                errmsg = "can't convert %s into Float" % w_value2.getclass(space).name
+                raise space.error(space.w_TypeError, errmsg)
+        else:
+            errmsg = "can't convert %s into Float" % w_value1.getclass(space).name
+            raise space.error(space.w_TypeError, errmsg)
 
     @moduledef.function("log", value="float", base="float")
     @converter
