@@ -7,6 +7,8 @@ from rpython.rlib import rfloat
 from topaz.module import Module, ModuleDef, ClassDef
 from topaz.objects.exceptionobject import W_StandardError, W_TypeError, \
                                           new_exception_allocate
+from topaz.objects.numericobject import W_NumericObject
+from topaz.objects.integerobject import W_IntegerObject
 from rpython.rlib.rfloat import NAN
 from topaz.error import RubyError
 
@@ -15,9 +17,9 @@ def check_type_errors(*expected_types):
         def cte_func(self, space, args_w):
             args = []
             for expected_type, w_arg in zip(expected_types, args_w):
-                exp_type = getattr(space, expected_type) # not rpython
+                exp_type = space.getclassfor(expected_type)
                 if space.is_kind_of(w_arg, exp_type):
-                    if expected_type == "w_integer":
+                    if expected_type == W_IntegerObject:
                         args.append(space.int_w(w_arg))
                     else:
                         args.append(space.float_w(w_arg))
@@ -46,12 +48,12 @@ class Math(Module):
         space.set_const(w_mod, "DomainError", space.getclassfor(W_DomainError))
 
     @moduledef.function("acos", value="float")
-    @check_type_errors("w_numeric")
+    @check_type_errors(W_NumericObject)
     def method_acos(self, space, value):
         return space.newfloat(math.acos(value))
 
     @moduledef.function("acosh", value="float")
-    @check_type_errors("w_numeric")
+    @check_type_errors(W_NumericObject)
     def method_acosh(self, space, value):
         try:
             res = math.acosh(value)
@@ -60,27 +62,27 @@ class Math(Module):
         return space.newfloat(res)
 
     @moduledef.function("asin", value="float")
-    @check_type_errors("w_numeric")
+    @check_type_errors(W_NumericObject)
     def method_asin(self, space, value):
         return space.newfloat(math.asin(value))
 
     @moduledef.function("asinh", value="float")
-    @check_type_errors("w_numeric")
+    @check_type_errors(W_NumericObject)
     def method_asinh(self, space, value):
         return space.newfloat(math.asinh(value))
 
     @moduledef.function("atan", value="float")
-    @check_type_errors("w_numeric")
+    @check_type_errors(W_NumericObject)
     def method_atan(self, space, value):
         return space.newfloat(math.atan(value))
 
     @moduledef.function("atan2", value1="float", value2="float")
-    @check_type_errors("w_numeric", "w_numeric")
+    @check_type_errors(W_NumericObject, W_NumericObject)
     def method_atan2(self, space, value1, value2):
         return space.newfloat(math.atan2(value1, value2))
 
     @moduledef.function("atanh", value="float")
-    @check_type_errors("w_numeric")
+    @check_type_errors(W_NumericObject)
     def method_atanh(self, space, value):
         try:
             res = math.atanh(value)
@@ -93,7 +95,7 @@ class Math(Module):
         return space.newfloat(res)
 
     @moduledef.function("cbrt", value="float")
-    @check_type_errors("w_numeric")
+    @check_type_errors(W_NumericObject)
     def method_cbrt(self, space, value):
         if value < 0:
             return space.newfloat(-math.pow(-value, 1.0 / 3.0))
@@ -101,12 +103,12 @@ class Math(Module):
             return space.newfloat(math.pow(value, 1.0 / 3.0))
 
     @moduledef.function("cos", value="float")
-    @check_type_errors("w_numeric")
+    @check_type_errors(W_NumericObject)
     def method_cos(self, space, value):
         return space.newfloat(math.cos(value))
 
     @moduledef.function("cosh", value="float")
-    @check_type_errors("w_numeric")
+    @check_type_errors(W_NumericObject)
     def method_cosh(self, space, value):
         try:
             res = math.cosh(value)
@@ -115,12 +117,12 @@ class Math(Module):
         return space.newfloat(res)
 
     @moduledef.function("exp", value="float")
-    @check_type_errors("w_numeric")
+    @check_type_errors(W_NumericObject)
     def method_exp(self, space, value):
         return space.newfloat(math.exp(value))
 
     @moduledef.function("frexp", value="float")
-    @check_type_errors("w_numeric")
+    @check_type_errors(W_NumericObject)
     def method_frexp(self, space, value):
         mant, exp = math.frexp(value)
         w_mant = space.newfloat(mant)
@@ -128,7 +130,7 @@ class Math(Module):
         return space.newarray([w_mant, w_exp])
 
     @moduledef.function("gamma", value="float")
-    @check_type_errors("w_numeric")
+    @check_type_errors(W_NumericObject)
     def method_gamma(self, space, value):
         try:
             res = rfloat.gamma(value)
@@ -143,17 +145,17 @@ class Math(Module):
         return space.newfloat(res)
 
     @moduledef.function("hypot", value1="float", value2="float")
-    @check_type_errors("w_numeric", "w_numeric")
+    @check_type_errors(W_NumericObject, W_NumericObject)
     def method_hypot(self, space, value1, value2):
         return space.newfloat(math.hypot(value1, value2))
 
     @moduledef.function("ldexp", value1="float", value2="int")
-    @check_type_errors("w_numeric", "w_integer")
+    @check_type_errors(W_NumericObject, W_IntegerObject)
     def method_ldexp(self, space, value1, value2):
         return space.newfloat(math.ldexp(value1, value2))
 
     @moduledef.function("log", value="float", base="float")
-    @check_type_errors("w_numeric", "w_numeric")
+    @check_type_errors(W_NumericObject, W_NumericObject)
     def method_log(self, space, value, base=math.e):
         try:
             res = 0.0
@@ -170,7 +172,7 @@ class Math(Module):
         return space.newfloat(res)
 
     @moduledef.function("log10", value="float")
-    @check_type_errors("w_numeric")
+    @check_type_errors(W_NumericObject)
     def method_log10(self, space, value):
         try:
             res = math.log10(value)
@@ -183,7 +185,7 @@ class Math(Module):
         return space.newfloat(res)
 
     @moduledef.function("log2", value="float")
-    @check_type_errors("w_numeric")
+    @check_type_errors(W_NumericObject)
     def method_log2(self, space, value):
         try:
             res = math.log(value) / math.log(2)
@@ -196,12 +198,12 @@ class Math(Module):
         return space.newfloat(res)
 
     @moduledef.function("sin", value="float")
-    @check_type_errors("w_numeric")
+    @check_type_errors(W_NumericObject)
     def method_sin(self, space, value):
         return space.newfloat(math.sin(value))
 
     @moduledef.function("sinh", value="float")
-    @check_type_errors("w_numeric")
+    @check_type_errors(W_NumericObject)
     def method_sinh(self, space, value):
         try:
             res = math.sinh(value)
@@ -210,12 +212,12 @@ class Math(Module):
         return space.newfloat(res)
 
     @moduledef.function("sqrt", value="float")
-    @check_type_errors("w_numeric")
+    @check_type_errors(W_NumericObject)
     def method_sqrt(self, space, value):
         return space.newfloat(math.sqrt(value))
 
     @moduledef.function("tan", value="float")
-    @check_type_errors("w_numeric")
+    @check_type_errors(W_NumericObject)
     def method_tan(self, space, value):
         try:
             res = math.tan(value)
@@ -224,7 +226,7 @@ class Math(Module):
         return space.newfloat(res)
 
     @moduledef.function("tanh", value="float")
-    @check_type_errors("w_numeric")
+    @check_type_errors(W_NumericObject)
     def method_tanh(self, space, value):
         return space.newfloat(math.tanh(value))
 
