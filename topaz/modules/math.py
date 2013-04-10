@@ -10,13 +10,13 @@ from topaz.objects.exceptionobject import W_StandardError, \
 from rpython.rlib.rfloat import NAN
 from topaz.error import RubyError
 
-def check_type_errors(*expected_types):
-    expected_types = ['w_' + i.lower() for i in expected_types]
+def check_type_errors(*exp_ruby_types):
+    exp_wrapper_types = ['w_' + i.lower() for i in exp_ruby_types]
     def decorator(func):
         def cte_func(self, space, args_w):
             args = []
-            for expected_type, w_arg in zip(expected_types, args_w):
-                exp_type = getattr(space, expected_type)
+            for exp_wrapper_type, w_arg in zip(exp_wrapper_types, args_w):
+                exp_type = getattr(space, exp_wrapper_type)
                 if space.is_kind_of(w_arg, exp_type):
                     if exp_type is space.w_integer:
                         args.append(space.int_w(w_arg))
