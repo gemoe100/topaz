@@ -12,15 +12,9 @@ from topaz.error import RubyError
 
 def check_type_errors(*expected_types):
     def decorator(func):
-        def cte_func(self, space, w_arg1, w_arg2 = None):
-            # TODO: Remove the following hack, once w_args* works again
-            if w_arg2 is None:
-                w_args = (w_arg1,)
-            else:
-                w_args = (w_arg1, w_arg2)
-            #########
+        def cte_func(self, space, args_w):
             args = []
-            for expected_type, w_arg in zip(expected_types, w_args):
+            for expected_type, w_arg in zip(expected_types, args_w):
                 exp_type = getattr(space, expected_type) # not rpython
                 if space.is_kind_of(w_arg, exp_type):
                     if expected_type == "w_integer":
