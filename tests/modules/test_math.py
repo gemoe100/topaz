@@ -188,9 +188,9 @@ class TestMath(BaseTopazTest):
         assert self.unwrap(space, w_res) == [0, math.tanh(1), 1.0]
 
     def test_type_error(self, space):
-        for funcname in ["acos", "acosh", "asin", "asinh", "atan", "atan2",
+        for funcname in ["acos", "acosh", "asin", "asinh", "atan",
                          "atanh", "cbrt", "cos", "cosh", "exp",
-                         "frexp", "gamma", "hypot", "log",
+                         "frexp", "gamma", "log",
                          "log10", "log2", "sin", "sinh", "sqrt", "tan", "tanh"]:
             with self.raises(space, "TypeError",
                              "can't convert String into Float"):
@@ -198,7 +198,7 @@ class TestMath(BaseTopazTest):
             with self.raises(space, "TypeError",
                              "can't convert Symbol into Float"):
                 space.execute("Math.%s(:some_Symbol)" % funcname)
-        for funcname in ["ldexp"]:
+        for funcname in ["ldexp", "hypot", "atan2"]:
             with self.raises(space, "TypeError",
                              "can't convert String into Float"):
                 space.execute("Math.%s('some String', 1)" % funcname)
