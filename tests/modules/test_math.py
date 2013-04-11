@@ -116,6 +116,12 @@ class TestMath(BaseTopazTest):
         w_res = space.execute("return Math.ldexp(Math.frexp(1234)[0], 11)")
         assert self.unwrap(space, w_res) == 1234
 
+        w_expected = space.execute("Math.ldexp(1, 2)")
+        expected = self.unwrap(space, w_expected)
+        w_actual = space.execute("Math.ldexp(1, 2.3)")
+        actual = self.unwrap(space, w_actual)
+        assert expected == actual
+
     def test_log(self, space):
         with self.raises(space, "Math::DomainError", 'Numerical argument is out of domain - "log"'):
             space.execute("Math.log(-1)")
