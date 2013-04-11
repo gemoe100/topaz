@@ -171,7 +171,7 @@ class Math(Module):
                 value2 = Coerce.int(space, w_value2)
                 return space.newfloat(math.ldexp(value1, value2))
             else:
-                errmsg = "can't convert %s into Float" % w_value2.getclass(space).name
+                errmsg = "can't convert %s into Integer" % w_value2.getclass(space).name
                 raise space.error(space.w_TypeError, errmsg)
         else:
             errmsg = "can't convert %s into Float" % w_value1.getclass(space).name
