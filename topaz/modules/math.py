@@ -181,7 +181,7 @@ class Math(Module):
     def method_hypot(self, space, value1, value2):
         return space.newfloat(math.hypot(value1, value2))
 
-    @moduledef.function("ldexp", value1="w_float", value2="w_integer")
+    @moduledef.function("ldexp", value1="float", value2="int")
     @ldexp_converter
     def method_ldexp(self, space, value1, value2):
         return space.newfloat(math.ldexp(value1, value2))
