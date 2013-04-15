@@ -196,8 +196,8 @@ class TestMath(BaseTopazTest):
     def test_type_error(self, space):
         for funcname in ["acos", "acosh", "asin", "asinh", "atan",
                          "atanh", "cbrt", "cos", "cosh", "exp",
-                         "frexp", "gamma", "log",
-                         "log10", "log2", "sin", "sinh", "sqrt", "tan", "tanh"]:
+                         "frexp", "gamma", "log", "log10", "log2",
+                         "sin", "sinh", "sqrt", "tan", "tanh"]:
             with self.raises(space, "TypeError",
                              "can't convert String into Float"):
                 space.execute("Math.%s('some String')" % funcname)
@@ -213,3 +213,8 @@ class TestMath(BaseTopazTest):
                              "can't convert Symbol into Float"):
                 space.execute("Math.%s(:some_Symbol, 3)" % funcname)
                 space.execute("Math.%s(4.0, :some_Symbol)" %funcname)
+
+    def test_argument_error(self, space):
+        for funcname in ["ldexp", "hypot", "atan2"]:
+            with self.raises(space, "ArgumentError"):
+                space.execute("Math.%s(:some_Symbol)" %funcname)
