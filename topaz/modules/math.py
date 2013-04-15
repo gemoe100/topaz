@@ -46,7 +46,13 @@ def converter(func):
 
 def ldexp_converter(func):
     def wrapper(self, space, args_w):
-        w_value1, w_value2 = args_w
+        if len(args_w) == 2:
+            w_value1, w_value2 = args_w
+        else:
+            # delegate and hope that the gateway will raise an
+            # ArgumentError
+            args = [Coerce.float(space, w_arg) for w_arg in args_w]
+            return func(self, space, args)
         if space.is_kind_of(w_value1, space.w_numeric):
             if space.is_kind_of(w_value2, space.w_numeric):
                 value1 = Coerce.float(space, w_value1)
