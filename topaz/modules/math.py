@@ -39,9 +39,7 @@ def converter(func):
                 f_arg = Coerce.float(space, w_arg)
                 f_args.append(f_arg)
             else:
-                clsname = space.getclass(w_arg).name
-                errmsg = "can't convert %s into Float" % clsname
-                raise space.error(space.w_TypeError, errmsg)
+                raise_type_error(space, w_arg)
         return func(self, space, *f_args)
     wrapper.func_name = func.func_name
     return wrapper
@@ -55,15 +53,16 @@ def ldexp_converter(func):
                 value2 = Coerce.int(space, w_value2)
                 return func(self, space, value1, value2)
             else:
-                clsname = space.getclass(w_value2).name
-                errmsg = "can't convert %s into Float" % clsname
-                raise space.error(space.w_TypeError, errmsg)
+                raise_type_error(space, w_value2)
         else:
-            clsname = space.getclass(w_value1).name
-            errmsg = "can't convert %s into Float" % clsname
-            raise space.error(space.w_TypeError, errmsg)
+            raise_type_error(space, w_value1)
     wrapper.func_name = func.func_name
     return wrapper
+
+def raise_type_error(space, w_variable):
+    clsname = space.getclass(w_variable).name
+    errmsg = "can't convert %s into Float" % clsname
+    raise space.error(space.w_TypeError, errmsg)
 
 class Math(Module):
     moduledef = ModuleDef("Math", filepath=__file__)
