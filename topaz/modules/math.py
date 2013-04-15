@@ -34,12 +34,12 @@ def check_type_errors(*exp_ruby_types):
 def converter(func):
     def wrapper(self, space, args_w):
         f_args = []
-        for arg_w in args_w:
-            if space.is_kind_of(arg_w, space.w_numeric):
-                f_arg = Coerce.float(space, arg_w)
+        for w_arg in args_w:
+            if space.is_kind_of(w_arg, space.w_numeric):
+                f_arg = Coerce.float(space, w_arg)
                 f_args.append(f_arg)
             else:
-                clsname = space.getclass(arg_w).name
+                clsname = space.getclass(w_arg).name
                 errmsg = "can't convert %s into Float" % clsname
                 raise space.error(space.w_TypeError, errmsg)
         return func(self, space, *f_args)
