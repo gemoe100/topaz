@@ -437,4 +437,24 @@ module Enumerable
     end
     ret
   end
+
+  def chunk(&block)
+    raise ArgumentError unless block
+    zipped = []
+    self.each { |elm| zipped << [block.call(elm), elm] }
+    switch = zipped.first.first
+    ret = []
+    nxt = []
+    zipped.each do |res, val|
+      if switch == res
+        nxt.last << val if nxt.last
+      else
+        ret << nxt.clone
+        nxt = [res, [val]]
+        switch = res
+      end
+    end
+    ret << nxt.clone
+    ret.last(ret.count - 1).each
+  end
 end
