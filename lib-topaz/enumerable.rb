@@ -442,7 +442,7 @@ module Enumerable
     raise ArgumentError unless block
     zipped = []
     self.each { |elm| zipped << [block.call(elm), elm] }
-    switch = zipped.first.first
+    switch = !zipped.first.first
     ret = []
     nxt = []
     zipped.each do |res, val|
