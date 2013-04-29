@@ -438,10 +438,10 @@ module Enumerable
     ret
   end
 
-  def chunk(&block)
-    raise ArgumentError unless block
+  def chunk
+    raise ArgumentError unless block_given?
     zipped = []
-    self.each { |elm| zipped << [block.call(elm), elm] }
+    zipped = self.inject([]) { |zpt, elm| zpt << [yield(elm), elm] }
     switch = !zipped.first.first
     ret = []
     nxt = []
