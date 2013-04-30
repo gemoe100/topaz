@@ -438,10 +438,12 @@ module Enumerable
     ret
   end
 
-  def chunk
+  def chunk(init_state=nil)
     raise ArgumentError unless block_given?
-    zipped = []
-    zipped = self.inject([]) { |zpt, elm| zpt << [yield(elm), elm] }
+    zipped = self.inject([]) do |zpt, elm|
+        blkelm = init_state ? yield(elm, init_state) : yield(elm)
+        zpt << [blkelm, elm]
+    end
     switch = !zipped.first.first
     ret = []
     nxt = []
