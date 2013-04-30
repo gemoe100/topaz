@@ -180,3 +180,17 @@ class TestEnumberable(BaseTopazTest):
         assert self.unwrap(space, w_res) == range(1, 11)
         w_res = space.execute("return (1..10).reject { |i| i < 11 }")
         assert self.unwrap(space, w_res) == []
+
+    def test_chunk(self, space):
+        w_res = space.execute(
+                    "['dum', 'foo', 'ding', 'dong'].chunk([]) do |w, state|\n"
+                    "  if !state.include?(w[0])\n"
+                    "    state << w[0]\n"
+                    "    w[0]\n"
+                    "  else\n"
+                    "    state.index(w[0])"
+                    "  end\n"
+                    "end.to_a\n")
+        assert self.unwrap(space, w_res) == [['d', ['dum']],
+                                             ['f', ['foo']],
+                                             [0, ['ding', 'dong']]]
